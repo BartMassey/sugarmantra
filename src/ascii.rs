@@ -1,4 +1,7 @@
 // Copyright © 2017 Bart Massey
+// [This program is licensed under the "MIT License"]
+// Please see the file COPYING in the source
+// distribution of this software for license terms.
 
 // Provide basic conversions between characters and Unicode
 // scalars in the ASCII range.
