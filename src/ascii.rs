@@ -33,6 +33,10 @@ pub fn is_upper(c: char) -> bool {
     x >= ord('A') && x <= ord('Z')
 }
 
+pub fn is_alpha(c: char) -> bool {
+    is_lower(c) || is_upper(c)
+}
+
 pub fn to_lower(c: char) -> char {
     if !is_upper(c) {
         return c;
