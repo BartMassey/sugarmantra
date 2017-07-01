@@ -30,14 +30,17 @@ fn load_dict() -> Dict {
     let extra = [
 	"s",
 	"ed",
+	"er",
 	"ing",
-	"ly"
+	"ly",
+        "i",
+        "a"
     ];
     let f = File::open(DICT).expect("cannot open dictionary");
     let r = BufReader::new(&f);
     for l in r.lines() {
         let w = l.expect("cannot read word from dictionary");
-	if w.len() == 0 {
+	if w.len() <= 1 {
 	    continue;
         }
         let e = Entry {
