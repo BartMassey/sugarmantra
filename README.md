@@ -1,8 +1,8 @@
-# anagram-rust
+# sugarmantra
 Copyright © 2017 Bart Massey
 
-This is an anagram solver. The letters to be anagrammed are
-given as the first argument: the output is a list of
+This is a Rust anagram solver. The letters to be anagrammed
+are given as the first argument: the output is a list of
 anagram-like things.
 
 This is a fairly direct translation of an anagram solver I
