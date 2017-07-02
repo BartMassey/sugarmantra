@@ -10,12 +10,11 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 
-mod hist;
-mod ascii;
-
-use ::hist::*;
+extern crate multiset;
 
 const DICT: &'static str = "dict.txt";
+
+type Hist = multiset::HashMultiSet<char>;
 
 struct Entry {
     word: String,
@@ -24,6 +23,26 @@ struct Entry {
 
 type Dict = Vec<Entry>;
 type WordList = Vec<String>;
+
+fn hist_string(w: &str) -> Option<Hist> {
+    let mut h = Hist::new();
+    for c in w.chars() {
+        assert!(c.is_alphabetic());
+        let ci =
+            if c.is_uppercase() {
+                let mut clc = c.to_lowercase();
+                let cl = clc.next().expect("character has no lowercase codes");
+                if clc.count() != 0 {
+                    return None
+                };
+                cl
+            } else {
+                c
+            };
+        h.insert(ci);
+    };
+    Some(h)
+}
 
 fn load_dict() -> Dict {
     let mut dict: Dict = Vec::new();
@@ -42,20 +61,26 @@ fn load_dict() -> Dict {
         let w = l.expect("cannot read word from dictionary");
 	if w.len() <= 1 {
 	    continue;
-        }
-        let e = Entry {
-            whist: Hist::hist_string(&w),
-            word: w
         };
-        dict.push(e);
+        if let Some(h) = hist_string(&w) {
+            let e = Entry {
+                whist: h,
+                word: w
+            };
+            dict.push(e);
+        };
     };
     for x in extra.iter() {
-        let e = Entry {
-	    word: String::from(*x),
-	    whist: Hist::hist_string(x)
-	};
-        dict.push(e);
-    }
+        if let Some(h) = hist_string(x) {
+            let e = Entry {
+	        word: String::from(*x),
+	        whist: h
+	    };
+            dict.push(e);
+        } else {
+            panic!("mysterious extra entry");
+        };
+    };
     let len_order = |a: &Entry, b: &Entry| {
 	a.word.len().cmp(&b.word.len())
     };
@@ -65,7 +90,7 @@ fn load_dict() -> Dict {
 
 fn anagram(dict: &Dict, remaining: &mut Hist,
            start: usize, sofar: &mut WordList) {
-    if remaining.hist_empty() {
+    if remaining.total_elements() == 0 {
         print!("{}", sofar[0]);
         for i in 1..sofar.len() {
             print!(" {}", sofar[i]);
@@ -74,19 +99,22 @@ fn anagram(dict: &Dict, remaining: &mut Hist,
         return;
     };
     for i in start..dict.len() {
-        if remaining.hist_subset(&dict[i].whist) {
-            remaining.hist_subtract(&dict[i].whist);
+        if *remaining >= dict[i].whist {
+            *remaining -= dict[i].whist.clone();
             sofar.push(dict[i].word.clone());
             anagram(dict, remaining, i, sofar);
             let _ = sofar.pop();
-            remaining.hist_add(&dict[i].whist);
+            *remaining += dict[i].whist.clone();
         }
     }
 }
 
 fn main() {
     let target = args().nth(1).expect("usage: anagram <target>");
-    let mut th = Hist::hist_string(&target);
+    let mut th = match hist_string(&target) {
+        Some(h) => h,
+        None => panic!("invalid target")
+    };
     let dict = load_dict();
     let mut sofar = Vec::new();
     anagram(&dict, &mut th, 0, &mut sofar);

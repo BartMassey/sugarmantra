@@ -18,8 +18,14 @@ shortest-to-longest order with alphabetic suborder.
 The program expects to find a dictionary named `dict.txt` in
 its working directory. You can get such a dictionary from my
 [wordlists](http://github.com/BartMassey/wordlists) or just
-use `/usr/dict/words` or whatever. Except for "i", "a", and
-"s", one-letter words are excluded from the dictionary.
+use `/usr/dict/words` or whatever. One-letter "words" are
+excluded from the dictionary. "i", "a", "s" and some other
+common word-parts are included in the word list to allow
+more anagrams.
+
+The program will kind of work with general Unicode, but
+really has only been tested with ASCII. Also, the dictionary
+supplements are specific to English.
 
 This program is licensed under the "MIT License". Please see
 the file `COPYING` in the source distribution of this software
