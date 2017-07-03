@@ -39,7 +39,9 @@ type WordList = Vec<String>;
 fn hist_string(w: &str) -> Option<Hist> {
     let mut h = Hist::new();
     for c in w.chars() {
-        assert!(c.is_alphabetic());
+        if !c.is_alphabetic() {
+            return None
+        };
         let ci =
             if c.is_uppercase() {
                 let mut clc = c.to_lowercase();
