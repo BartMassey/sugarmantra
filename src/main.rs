@@ -58,7 +58,7 @@ fn hist_string(w: &str) -> Option<Hist> {
     Some(h)
 }
 
-fn load_dict() -> Dict {
+fn load_dict(target: &Hist) -> Dict {
     let mut dict: Dict = Vec::new();
     let extra = [
 	"s",
@@ -77,11 +77,13 @@ fn load_dict() -> Dict {
 	    continue;
         };
         if let Some(h) = hist_string(&w) {
-            let e = Entry {
-                whist: h,
-                word: w
+            if h <= *target {
+                let e = Entry {
+                    whist: h,
+                    word: w
+                };
+                dict.push(e);
             };
-            dict.push(e);
         };
     };
     for x in extra.iter() {
@@ -129,7 +131,7 @@ fn main() {
         Some(h) => h,
         None => panic!("invalid target")
     };
-    let dict = load_dict();
+    let dict = load_dict(&th);
     let mut sofar = Vec::new();
     anagram(&dict, &mut th, 0, &mut sofar);
 }
