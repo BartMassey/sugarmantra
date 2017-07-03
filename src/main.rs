@@ -9,10 +9,22 @@ use std::env::*;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
+use std::path::*;
 
 extern crate multiset;
 
-const DICT: &'static str = "dict.txt";
+fn open_dict() -> File {
+    for file in ["scowl.txt", "eowl.txt", "words"].iter() {
+        for dir in ["/usr/share/dict", "/usr/local/share/dict"].iter() {
+            let mut path = PathBuf::from(dir);
+            path.push(file);
+            if let Ok(f) = File::open(path) {
+                return f;
+            };
+        };
+    };
+    panic!("could not find a dictionary");
+}
 
 type Hist = multiset::HashMultiSet<char>;
 
@@ -55,7 +67,7 @@ fn load_dict() -> Dict {
         "i",
         "a"
     ];
-    let f = File::open(DICT).expect("cannot open dictionary");
+    let f = open_dict();
     let r = BufReader::new(&f);
     for l in r.lines() {
         let w = l.expect("cannot read word from dictionary");
