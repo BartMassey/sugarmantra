@@ -19,13 +19,13 @@ extern crate multiset;
 
 /// Construct anagrams from the suffix of `dict` starting at
 /// `start`. The `remaining` characters are available for
-/// histogramming. Anagrams are pushed onto `sofar` as they
-/// are constructed. If construction is complete, display
-/// the result.
-fn anagram<'a>(dict: &'a Vec<Entry>, remaining: &mut Histogram,
+/// histogramming. Anagram words are pushed onto `sofar` as
+/// they are constructed. If construction is complete,
+/// the result is displayed.
+fn anagram<'a>(dict: &'a Vec<Entry>, remaining: &Histogram,
            start: usize, sofar: &mut Vec<&'a str>) {
-    // Base case: All possible anagrams have been
-    // constructed. Display and return them.
+    // Base case: An anagram has been completely
+    // constructed. Display it and return.
     if remaining.total_elements() == 0 {
         print!("{}", sofar[0]);
         for i in 1..sofar.len() {
@@ -37,18 +37,14 @@ fn anagram<'a>(dict: &'a Vec<Entry>, remaining: &mut Histogram,
     // Recursive case: For each entry from start to end of
     // the dictionary, if that entry can be used to extend
     // the anagram do so, then recursively try all
-    // completions from that point. Use do-undo to ensure
-    // that remaining is still valid.
+    // completions from that point. Use do-undo on `sofar`
+    // to avoid cloning.
     for i in start..dict.len() {
         if dict[i].whist.is_submultiset(remaining)  {
-            // XXX The dubious cloning here is due to
-            // unfortunate decisions in the `MultiSet`
-            // crate. This should be fixed.
-            *remaining -= &dict[i].whist;
+            let now_remaining = remaining - &dict[i].whist;
             sofar.push(&dict[i].word);
-            anagram(dict, remaining, i, sofar);
+            anagram(dict, &now_remaining, i, sofar);
             let _ = sofar.pop();
-            *remaining += &dict[i].whist;
         }
     }
 }
