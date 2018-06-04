@@ -22,8 +22,8 @@ extern crate multiset;
 /// histogramming. Anagrams are pushed onto `sofar` as they
 /// are constructed. If construction is complete, display
 /// the result.
-fn anagram(dict: &Vec<Entry>, remaining: &mut Histogram,
-           start: usize, sofar: &mut Vec<String>) {
+fn anagram<'a>(dict: &'a Vec<Entry>, remaining: &mut Histogram,
+           start: usize, sofar: &mut Vec<&'a str>) {
     // Base case: All possible anagrams have been
     // constructed. Display and return them.
     if remaining.total_elements() == 0 {
@@ -46,7 +46,7 @@ fn anagram(dict: &Vec<Entry>, remaining: &mut Histogram,
             // in the `MultiSet` crate.  Both should be
             // fixed.
             *remaining -= dict[i].whist.clone();
-            sofar.push(dict[i].word.clone());
+            sofar.push(&dict[i].word);
             anagram(dict, remaining, i, sofar);
             let _ = sofar.pop();
             *remaining += dict[i].whist.clone();
