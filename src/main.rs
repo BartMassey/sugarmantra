@@ -106,7 +106,7 @@ fn load_dictionary(target: &Histogram) -> Vec<Entry> {
     };
     // Sort in order of increasing length.
     let len_order = |a: &Entry, b: &Entry| {
-	a.word.len().cmp(&b.word.len())
+	b.word.len().cmp(&a.word.len())
     };
     dict.sort_by(len_order);
     dict

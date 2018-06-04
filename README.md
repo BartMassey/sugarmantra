@@ -13,7 +13,7 @@ The basic strategy is to work in the space of histograms,
 using a do-undo depth-first search over the supplied
 dictionary. The current algorithm does not produce
 algorithms with duplicate words, and outputs the words in
-shortest-to-longest order with alphabetic suborder.
+longest-to-shortest order with alphabetic suborder.
 
 The program expects to find a dictionary named `dict.txt` in
 its working directory. You can get such a dictionary from my
