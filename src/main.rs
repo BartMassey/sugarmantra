@@ -11,7 +11,8 @@ mod dictionary;
 use histogram::*;
 use dictionary::*;
 
-use std::env::*;
+use std::env::args;
+use std::process::exit;
 
 extern crate multiset;
 
@@ -55,12 +56,17 @@ fn anagram(dict: &Vec<Entry>, remaining: &mut Histogram,
 
 /// Run the program.
 fn main() {
-    let target = args().nth(1).expect("usage: anagram <target>");
-    let mut th = match word_histogram(&target) {
-        Some(h) => h,
-        None => panic!("invalid target")
+    let mut target_hist = Histogram::new();
+    for word in args().skip(1) {
+        target_hist += match word_histogram(&word) {
+            Some(hist) => hist,
+            None => {
+                eprintln!("target words contain invalid characters");
+                exit(1);
+            },
+        }
     };
-    let dict = load_dictionary(&th);
+    let dict = load_dictionary(&target_hist);
     let mut sofar = Vec::new();
-    anagram(&dict, &mut th, 0, &mut sofar);
+    anagram(&dict, &mut target_hist, 0, &mut sofar);
 }
