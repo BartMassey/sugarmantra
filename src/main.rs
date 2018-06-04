@@ -59,22 +59,11 @@ fn word_histogram(word: &str) -> Option<Histogram> {
         if !c.is_alphabetic() {
             return None
         };
-        let c_lowercase =
-            if c.is_uppercase() {
-                // It may be the case that a single uppercase
-                // char translates to several lowercase chars.
-                let mut chars_lowercase = c.to_lowercase();
-                let c_lowercase = chars_lowercase
-                    .next()
-                    .expect("character has no lowercase codes");
-                if chars_lowercase.count() != 0 {
-                    return None
-                };
-                c_lowercase
-            } else {
-                c
-            };
-        histogram.insert(c_lowercase);
+        // It may be the case that a single uppercase
+        // char translates to several lowercase chars.
+        for c_lowercase in c.to_lowercase() {
+            histogram.insert(c_lowercase);
+        }
     };
     Some(histogram)
 }
