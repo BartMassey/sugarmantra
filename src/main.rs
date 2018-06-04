@@ -42,14 +42,13 @@ fn anagram<'a>(dict: &'a Vec<Entry>, remaining: &mut Histogram,
     for i in start..dict.len() {
         if dict[i].whist.is_submultiset(remaining)  {
             // XXX The dubious cloning here is due to
-            // unfortunate decisions in this code and also
-            // in the `MultiSet` crate.  Both should be
-            // fixed.
-            *remaining -= dict[i].whist.clone();
+            // unfortunate decisions in the `MultiSet`
+            // crate. This should be fixed.
+            *remaining -= &dict[i].whist;
             sofar.push(&dict[i].word);
             anagram(dict, remaining, i, sofar);
             let _ = sofar.pop();
-            *remaining += dict[i].whist.clone();
+            *remaining += &dict[i].whist;
         }
     }
 }
