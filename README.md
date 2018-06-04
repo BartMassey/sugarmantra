@@ -27,6 +27,14 @@ The program will kind of work with general Unicode, but
 really has only been tested with ASCII. Also, the dictionary
 supplements are specific to English.
 
+# License
+
 This program is licensed under the "MIT License". Please see
 the file `COPYING` in the source distribution of this software
 for license terms.
+
+# Acknowledgments
+
+Thanks to Jacob Mitchell for the excellent `multiset` crate
+underlying this project. Thanks to Ashton Hunger for a
+detailed project review that resulted in a bunch of cleanup.
