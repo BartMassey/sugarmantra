@@ -33,7 +33,7 @@ fn anagram<'a>(dict: &'a Vec<Entry>, remaining: &Histogram,
         }
         println!();
         return;
-    };
+    }
     // Recursive case: For each entry from start to end of
     // the dictionary, if that entry can be used to extend
     // the anagram do so, then recursively try all
@@ -60,7 +60,7 @@ fn main() {
                 exit(1);
             },
         }
-    };
+    }
     let dict = load_dictionary(&target_hist);
     let mut sofar = Vec::new();
     anagram(&dict, &mut target_hist, 0, &mut sofar);

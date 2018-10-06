@@ -17,12 +17,12 @@ pub fn word_histogram(word: &str) -> Option<Histogram> {
     for c in word.chars() {
         if !c.is_alphabetic() {
             return None
-        };
+        }
         // It may be the case that a single uppercase
         // char translates to several lowercase chars.
         for c_lowercase in c.to_lowercase() {
             histogram.insert(c_lowercase);
         }
-    };
+    }
     Some(histogram)
 }

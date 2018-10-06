@@ -34,9 +34,9 @@ fn open_dict() -> File {
             path.push(file);
             if let Ok(f) = File::open(path) {
                 return f;
-            };
-        };
-    };
+            }
+        }
+    }
     panic!("could not find a dictionary");
 }
 
@@ -60,7 +60,7 @@ pub fn load_dictionary(target: &Histogram) -> Vec<Entry> {
         let word = line.expect("cannot read word from dictionary");
 	if word.len() <= 1 {
 	    continue;
-        };
+        }
         if let Some(whist) = word_histogram(&word) {
             if whist.is_submultiset(target) {
                 let e = Entry {
@@ -68,9 +68,9 @@ pub fn load_dictionary(target: &Histogram) -> Vec<Entry> {
                     word,
                 };
                 dict.push(e);
-            };
-        };
-    };
+            }
+        }
+    }
     // Add the stems.
     for stem in STEMS.iter() {
         if let Some(whist) = word_histogram(stem) {
@@ -81,8 +81,8 @@ pub fn load_dictionary(target: &Histogram) -> Vec<Entry> {
             dict.push(e);
         } else {
             panic!("mysterious extra entry");
-        };
-    };
+        }
+    }
     // Sort in order of increasing length.
     let len_order = |a: &Entry, b: &Entry| {
 	b.word.len().cmp(&a.word.len())
