@@ -12,7 +12,7 @@ years ago. It is much, much faster in Rust.
 The basic strategy is to work in the space of histograms,
 using a do-undo depth-first search over the supplied
 dictionary. The current algorithm does not produce
-algorithms with duplicate words, and outputs the words in
+anagrams with duplicate words, and outputs the words in
 longest-to-shortest order with alphabetic suborder.
 
 The program expects to find a dictionary named `dict.txt` in
