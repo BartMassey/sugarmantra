@@ -7,10 +7,41 @@
 
 use histogram::*;
 
+use std::error::Error;
+use std::fmt;
 use std::fs::File;
+use std::io;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::path::*;
+
+#[derive(Debug)]
+pub enum DictionaryError {
+    NotFound,
+    ReadFailed(io::Error),
+}
+
+impl fmt::Display for DictionaryError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            DictionaryError::NotFound =>
+                write!(f, "could not find a dictionary"),
+            DictionaryError::ReadFailed(e) =>
+                write!(f, "could not read from dictionary: {}", e),
+        }
+    }
+}
+
+impl Error for DictionaryError {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            DictionaryError::NotFound =>
+                None,
+            DictionaryError::ReadFailed(e) =>
+                Some(e),
+        }
+    }
+}
 
 /// Stems are extra fragments used to allow more anagrams
 /// to be made by the user by giving the opportunity to glue
@@ -27,17 +58,17 @@ const STEMS:&[&str] = &[
 ];
 
 /// Read the word list from some dictionary.
-fn open_dict() -> File {
+fn open_dict() -> Result<File, DictionaryError> {
     for file in ["scowl.txt", "eowl.txt", "words"].iter() {
         for dir in ["/usr/share/dict", "/usr/local/share/dict"].iter() {
             let mut path = PathBuf::from(dir);
             path.push(file);
             if let Ok(f) = File::open(path) {
-                return f;
+                return Ok(f);
             }
         }
     }
-    panic!("could not find a dictionary");
+    Err(DictionaryError::NotFound)
 }
 
 /// A dictionary entry maps a word to its corresponding
@@ -51,13 +82,15 @@ pub struct Entry {
 /// some pruning along the way for efficiency.  Augment the
 /// dictionary with common stems that can be used to help
 /// construct words.
-pub fn load_dictionary(target: &Histogram) -> Vec<Entry> {
+pub fn load_dictionary(target: &Histogram) ->
+    Result<Vec<Entry>, DictionaryError>
+{
     // Load in the dictionary.
     let mut dict: Vec<Entry> = Vec::new();
-    let f = open_dict();
+    let f = open_dict()?;
     let r = BufReader::new(&f);
     for line in r.lines() {
-        let word = line.expect("cannot read word from dictionary");
+        let word = line.map_err(|e| DictionaryError::ReadFailed(e))?;
 	if word.len() <= 1 {
 	    continue;
         }
@@ -88,5 +121,5 @@ pub fn load_dictionary(target: &Histogram) -> Vec<Entry> {
 	b.word.len().cmp(&a.word.len())
     };
     dict.sort_by(len_order);
-    dict
+    Ok(dict)
 }

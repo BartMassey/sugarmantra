@@ -61,7 +61,10 @@ fn main() {
             },
         }
     }
-    let dict = load_dictionary(&target_hist);
+    let dict = load_dictionary(&target_hist).unwrap_or_else(|e| {
+        eprintln!("{}", e);
+        exit(1);
+    });
     let mut sofar = Vec::new();
     anagram(&dict, &mut target_hist, 0, &mut sofar);
 }
