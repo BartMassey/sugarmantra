@@ -5,25 +5,28 @@
 
 //! Anagram generator.
 
-mod histogram;
 mod dictionary;
-    
-use histogram::*;
+mod histogram;
+
 use dictionary::*;
+use histogram::*;
 
 use std::env::args;
 use std::process::exit;
 
 extern crate multiset;
 
-
 /// Construct anagrams from the suffix of `dict` starting at
 /// `start`. The `remaining` characters are available for
 /// histogramming. Anagram words are pushed onto `sofar` as
 /// they are constructed. If construction is complete,
 /// the result is displayed.
-fn anagram<'a>(dict: &'a [Entry], remaining: &Histogram,
-           start: usize, sofar: &mut Vec<&'a str>) {
+fn anagram<'a>(
+    dict: &'a [Entry],
+    remaining: &Histogram,
+    start: usize,
+    sofar: &mut Vec<&'a str>,
+) {
     // Base case: An anagram has been completely
     // constructed. Display it and return.
     if remaining.total_elements() == 0 {

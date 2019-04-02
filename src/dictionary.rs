@@ -24,10 +24,12 @@ pub enum DictionaryError {
 impl fmt::Display for DictionaryError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            DictionaryError::NotFound =>
-                write!(f, "could not find a dictionary"),
-            DictionaryError::ReadFailed(e) =>
-                write!(f, "could not read from dictionary: {}", e),
+            DictionaryError::NotFound => {
+                write!(f, "could not find a dictionary")
+            }
+            DictionaryError::ReadFailed(e) => {
+                write!(f, "could not read from dictionary: {}", e)
+            }
         }
     }
 }
@@ -80,7 +82,9 @@ pub struct Entry {
 /// some pruning along the way for efficiency.  Augment the
 /// dictionary with common stems that can be used to help
 /// construct words.
-pub fn load_dictionary(target: &Histogram) -> Result<Vec<Entry>, DictionaryError> {
+pub fn load_dictionary(
+    target: &Histogram,
+) -> Result<Vec<Entry>, DictionaryError> {
     // Load in the dictionary.
     let mut dict: Vec<Entry> = Vec::new();
     let f = open_dict()?;
