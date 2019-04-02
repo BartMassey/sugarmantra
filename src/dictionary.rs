@@ -90,7 +90,7 @@ pub fn load_dictionary(target: &Histogram) ->
     let f = open_dict()?;
     let r = BufReader::new(&f);
     for line in r.lines() {
-        let word = line.map_err(|e| DictionaryError::ReadFailed(e))?;
+        let word = line.map_err(DictionaryError::ReadFailed)?;
 	if word.len() <= 1 {
 	    continue;
         }

@@ -22,14 +22,14 @@ extern crate multiset;
 /// histogramming. Anagram words are pushed onto `sofar` as
 /// they are constructed. If construction is complete,
 /// the result is displayed.
-fn anagram<'a>(dict: &'a Vec<Entry>, remaining: &Histogram,
+fn anagram<'a>(dict: &'a [Entry], remaining: &Histogram,
            start: usize, sofar: &mut Vec<&'a str>) {
     // Base case: An anagram has been completely
     // constructed. Display it and return.
     if remaining.total_elements() == 0 {
         print!("{}", sofar[0]);
-        for i in 1..sofar.len() {
-            print!(" {}", sofar[i]);
+        for w in &sofar[1..] {
+            print!(" {}", *w);
         }
         println!();
         return;
@@ -66,5 +66,5 @@ fn main() {
         exit(1);
     });
     let mut sofar = Vec::new();
-    anagram(&dict, &mut target_hist, 0, &mut sofar);
+    anagram(&dict, &target_hist, 0, &mut sofar);
 }
