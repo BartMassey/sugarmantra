@@ -40,7 +40,7 @@ fn anagram<'a>(dict: &'a [Entry], remaining: &Histogram,
     // completions from that point. Use do-undo on `sofar`
     // to avoid cloning.
     for i in start..dict.len() {
-        if dict[i].whist.is_submultiset(remaining)  {
+        if dict[i].whist.is_submultiset(remaining) {
             let now_remaining = remaining - &dict[i].whist;
             sofar.push(&dict[i].word);
             anagram(dict, &now_remaining, i, sofar);

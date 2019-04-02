@@ -35,10 +35,8 @@ impl fmt::Display for DictionaryError {
 impl Error for DictionaryError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
-            DictionaryError::NotFound =>
-                None,
-            DictionaryError::ReadFailed(e) =>
-                Some(e),
+            DictionaryError::NotFound => None,
+            DictionaryError::ReadFailed(e) => Some(e),
         }
     }
 }
@@ -75,31 +73,26 @@ fn open_dict() -> Result<File, DictionaryError> {
 /// histogram.
 pub struct Entry {
     pub word: String,
-    pub whist: Histogram
+    pub whist: Histogram,
 }
 
 /// Parse the words in the dictionary into histograms.  Do
 /// some pruning along the way for efficiency.  Augment the
 /// dictionary with common stems that can be used to help
 /// construct words.
-pub fn load_dictionary(target: &Histogram) ->
-    Result<Vec<Entry>, DictionaryError>
-{
+pub fn load_dictionary(target: &Histogram) -> Result<Vec<Entry>, DictionaryError> {
     // Load in the dictionary.
     let mut dict: Vec<Entry> = Vec::new();
     let f = open_dict()?;
     let r = BufReader::new(&f);
     for line in r.lines() {
         let word = line.map_err(DictionaryError::ReadFailed)?;
-	if word.len() <= 1 {
-	    continue;
+        if word.len() <= 1 {
+            continue;
         }
         if let Some(whist) = word_histogram(&word) {
             if whist.is_submultiset(target) {
-                let e = Entry {
-                    whist,
-                    word,
-                };
+                let e = Entry { whist, word };
                 dict.push(e);
             }
         }
@@ -108,9 +101,9 @@ pub fn load_dictionary(target: &Histogram) ->
     for stem in STEMS.iter() {
         if let Some(whist) = word_histogram(stem) {
             let e = Entry {
-	        word: String::from(*stem),
-	        whist,
-	    };
+                word: String::from(*stem),
+                whist,
+            };
             dict.push(e);
         } else {
             panic!("mysterious extra entry");

@@ -16,7 +16,7 @@ pub fn word_histogram(word: &str) -> Option<Histogram> {
     let mut histogram = Histogram::new();
     for c in word.chars() {
         if !c.is_alphabetic() {
-            return None
+            return None;
         }
         // It may be the case that a single uppercase
         // char translates to several lowercase chars.
