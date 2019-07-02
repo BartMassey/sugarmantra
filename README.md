@@ -23,6 +23,8 @@ excluded from the dictionary. "i", "a", "s" and some other
 common word-parts are included in the word list to allow
 more anagrams.
 
+# Caveats
+
 The program will kind of work with general Unicode, but
 really has only been tested with ASCII. Also, the dictionary
 supplements are specific to English.
