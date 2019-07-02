@@ -86,9 +86,9 @@ pub fn load_dictionary(target: &Histogram) -> Result<Vec<Entry>, DictionaryError
     let f = open_dict()?;
     let r = BufReader::new(&f);
     for line in r.lines() {
-        let word = line.map_err(DictionaryError::ReadFailed)?;
-        if word.len() <= 1 {
-            continue;
+        let word = line.expect("cannot read word from dictionary");
+	if word.len() <= 1 {
+	    continue;
         }
         if let Some(whist) = word_histogram(&word) {
             if whist.is_submultiset(target) {
