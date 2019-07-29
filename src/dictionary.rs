@@ -47,15 +47,7 @@ impl Error for DictionaryError {
 /// to be made by the user by giving the opportunity to glue
 /// them to words. A stemmed dictionary would be better than
 /// this plan; also, this is very English-specific.
-const STEMS:&[&str] = &[
-    "s",
-    "ed",
-    "er",
-    "ing",
-    "ly",
-    "i",
-    "a",
-];
+const STEMS: &[&str] = &["s", "ed", "er", "ing", "ly", "i", "a"];
 
 /// Read the word list from some dictionary.
 fn open_dict() -> Result<File, DictionaryError> {
@@ -104,19 +96,15 @@ pub fn load_dictionary(
     // Add the stems.
     for stem in STEMS.iter() {
         if let Some(whist) = word_histogram(stem) {
-            let e = Entry {
-                word: String::from(*stem),
-                whist,
-            };
+            let e = Entry { word: String::from(*stem), whist };
             dict.push(e);
         } else {
             panic!("mysterious extra entry");
         }
     }
     // Sort in order of increasing length.
-    let len_order = |a: &Entry, b: &Entry| {
-	b.word.len().cmp(&a.word.len())
-    };
+    let len_order =
+        |a: &Entry, b: &Entry| b.word.len().cmp(&a.word.len());
     dict.sort_by(len_order);
     Ok(dict)
 }
