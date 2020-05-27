@@ -51,8 +51,8 @@ const STEMS: &[&str] = &["s", "ed", "er", "ing", "ly", "i", "a"];
 
 /// Read the word list from some dictionary.
 fn open_dict() -> Result<File, DictionaryError> {
-    for file in ["scowl.txt", "eowl.txt", "words"].iter() {
-        for dir in ["/usr/share/dict", "/usr/local/share/dict"].iter() {
+    for file in ["freq.txt", "scowl.txt", "eowl.txt", "words"].iter() {
+        for dir in ["/usr/local/share/dict", "/usr/share/dict"].iter() {
             let mut path = PathBuf::from(dir);
             path.push(file);
             if let Ok(f) = File::open(path) {
