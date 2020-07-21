@@ -5,11 +5,11 @@
 
 //! Histogram support for sugarmantra.
 
-use multiset;
+use multiset::HashMultiSet;
 
 /// A histogram is represented as a multiset or "bag" of
 /// characters.
-pub type Histogram = multiset::HashMultiSet<char>;
+pub type Histogram = HashMultiSet<char>;
 
 /// Calculate the histogram of the given word.
 pub fn word_histogram(word: &str) -> Option<Histogram> {
@@ -25,4 +25,12 @@ pub fn word_histogram(word: &str) -> Option<Histogram> {
         }
     }
     Some(histogram)
+}
+
+#[test]
+fn test_histogram_basic() {
+    assert_eq!(word_histogram("aha!"), None);
+    assert_eq!(word_histogram("").unwrap(), HashMultiSet::new());
+    let aha = vec!['a', 'h', 'a'].into_iter().collect();
+    assert_eq!(word_histogram("aha").unwrap(), aha);
 }

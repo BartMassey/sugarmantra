@@ -71,9 +71,11 @@ pub struct Entry {
 }
 
 /// Parse the words in the dictionary into histograms.  Do
-/// some pruning along the way for efficiency.  Augment the
-/// dictionary with common stems that can be used to help
-/// construct words.
+/// some pruning along the way for efficiency: the `target`
+/// argument restricts the dictionary to words that can be
+/// made from the target letters.  Augment the dictionary
+/// with common stems that can be used to help construct
+/// words.
 pub fn load_dictionary(
     target: &Histogram,
 ) -> Result<Vec<Entry>, DictionaryError> {
