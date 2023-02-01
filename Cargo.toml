@@ -9,6 +9,9 @@ version = "0.3.3"
 authors = ["Bart Massey <bart@cs.pdx.edu>"]
 edition = "2021"
 
+[dependencies]
+clap = { version = "4.1.4", features = ["derive"] }
+
 # The hacked version of multiset is unfortunate. Should fix.
 [dependencies.multiset]
 git = "http://github.com/BartMassey/multiset"

@@ -3,6 +3,8 @@
 // Please see the file COPYING in the source
 // distribution of this software for license terms.
 
+
+
 #![allow(clippy::uninlined_format_args)]
 
 //! Anagram generator.
@@ -13,8 +15,22 @@ mod histogram;
 use dictionary::*;
 use histogram::*;
 
-use std::env::args;
+use std::path::PathBuf;
 use std::process::exit;
+
+use clap::Parser;
+
+#[derive(Parser)]
+#[command(author, version, about, long_about = None)]
+/// Find anagrams of words presented as arguments.
+struct Args {
+    #[arg(short, long)]
+    /// Path to dictionary. (Default: some system dictionary.)
+    dict: Option<PathBuf>,
+    /// Words to anagram.
+    #[arg(required(true))]
+    words: Vec<String>,
+}
 
 extern crate multiset;
 
@@ -51,8 +67,10 @@ fn anagram<'a>(dict: &'a [Entry], remaining: &Histogram, start: usize, sofar: &m
 
 /// Run the program.
 fn main() {
+    let args = Args::parse();
+
     let mut target_hist = Histogram::new();
-    for word in args().skip(1) {
+    for word in args.words {
         target_hist += match word_histogram(&word) {
             Some(hist) => hist,
             None => {
@@ -61,7 +79,7 @@ fn main() {
             }
         }
     }
-    let dict = load_dictionary(&target_hist).unwrap_or_else(|e| {
+    let dict = load_dictionary(args.dict, &target_hist).unwrap_or_else(|e| {
         eprintln!("{}", e);
         exit(1);
     });

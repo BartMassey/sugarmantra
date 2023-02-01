@@ -50,7 +50,7 @@ impl Error for DictionaryError {
 const STEMS: &[&str] = &["s", "ed", "er", "ing", "ly", "i", "a"];
 
 /// Read the word list from some dictionary.
-fn open_dict() -> Result<File, DictionaryError> {
+fn open_system_dict() -> Result<File, DictionaryError> {
     for file in ["freq.txt", "scowl.txt", "eowl.txt", "words"].iter() {
         for dir in [".", "/usr/local/share/dict", "/usr/share/dict"].iter() {
             let mut path = PathBuf::from(dir);
@@ -76,10 +76,16 @@ pub struct Entry {
 /// made from the target letters.  Augment the dictionary
 /// with common stems that can be used to help construct
 /// words.
-pub fn load_dictionary(target: &Histogram) -> Result<Vec<Entry>, DictionaryError> {
+pub fn load_dictionary<P>(path: Option<P>, target: &Histogram) -> Result<Vec<Entry>, DictionaryError>
+    where P: AsRef<Path>
+{
     // Load in the dictionary.
     let mut dict: Vec<Entry> = Vec::new();
-    let f = open_dict()?;
+    let f = if let Some(path) = path {
+        File::open(path).map_err(|_| DictionaryError::NotFound)?
+    } else {
+        open_system_dict()?
+    };
     let r = BufReader::new(&f);
     for line in r.lines() {
         let word = line.map_err(DictionaryError::ReadFailed)?;
