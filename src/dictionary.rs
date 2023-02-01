@@ -19,6 +19,7 @@ use std::path::*;
 pub enum DictionaryError {
     NotFound,
     ReadFailed(io::Error),
+    BadStem(String),
 }
 
 impl fmt::Display for DictionaryError {
@@ -30,6 +31,9 @@ impl fmt::Display for DictionaryError {
             DictionaryError::ReadFailed(e) => {
                 write!(f, "could not read from dictionary: {}", e)
             }
+            DictionaryError::BadStem(s) => {
+                write!(f, "illegal stem {}", s)
+            }
         }
     }
 }
@@ -39,15 +43,10 @@ impl Error for DictionaryError {
         match self {
             DictionaryError::NotFound => None,
             DictionaryError::ReadFailed(e) => Some(e),
+            DictionaryError::BadStem(_) => None,
         }
     }
 }
-
-/// Stems are extra fragments used to allow more anagrams
-/// to be made by the user by giving the opportunity to glue
-/// them to words. A stemmed dictionary would be better than
-/// this plan; also, this is very English-specific.
-const STEMS: &[&str] = &["s", "ed", "er", "ing", "ly", "i", "a"];
 
 /// Read the word list from some dictionary.
 fn open_system_dict() -> Result<File, DictionaryError> {
@@ -76,7 +75,12 @@ pub struct Entry {
 /// made from the target letters.  Augment the dictionary
 /// with common stems that can be used to help construct
 /// words.
-pub fn load_dictionary<P>(path: Option<P>, target: &Histogram) -> Result<Vec<Entry>, DictionaryError>
+pub fn load_dictionary<P>(
+    path: Option<P>,
+    limit: Option<usize>,
+    stems: String,
+    target: &Histogram,
+) -> Result<Vec<Entry>, DictionaryError>
     where P: AsRef<Path>
 {
     // Load in the dictionary.
@@ -92,6 +96,11 @@ pub fn load_dictionary<P>(path: Option<P>, target: &Histogram) -> Result<Vec<Ent
         if word.len() <= 1 {
             continue;
         }
+        if let Some(limit) = limit {
+            if word.len() > limit {
+                continue;
+            }
+        }
         if let Some(whist) = word_histogram(&word) {
             if whist.is_submultiset(target) {
                 let e = Entry { whist, word };
@@ -100,16 +109,10 @@ pub fn load_dictionary<P>(path: Option<P>, target: &Histogram) -> Result<Vec<Ent
         }
     }
     // Add the stems.
-    for stem in STEMS.iter() {
-        if let Some(whist) = word_histogram(stem) {
-            let e = Entry {
-                word: String::from(*stem),
-                whist,
-            };
-            dict.push(e);
-        } else {
-            panic!("mysterious extra entry");
-        }
+    for word in stems.split(',').map(str::to_owned) {
+        let whist = word_histogram(&word).ok_or_else(|| DictionaryError::BadStem(word.clone()))?;
+        let e = Entry { word, whist };
+        dict.push(e);
     }
     // Sort in order of increasing length.
     let len_order = |a: &Entry, b: &Entry| b.word.len().cmp(&a.word.len());

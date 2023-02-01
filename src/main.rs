@@ -20,13 +20,25 @@ use std::process::exit;
 
 use clap::Parser;
 
+// Stems are extra fragments used to allow more anagrams to
+// be made by the user by giving the opportunity to glue
+// them to words. A stemmed dictionary would be better than
+// this plan; also, the default stems are very
+// English-specific.
+
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 /// Find anagrams of words presented as arguments.
 struct Args {
     #[arg(short, long)]
-    /// Path to dictionary. (Default: some system dictionary.)
+    /// Path to dictionary. [default: some system dictionary.]
     dict: Option<PathBuf>,
+    #[arg(short, long)]
+    /// Limit on generated word length in characters.
+    limit: Option<usize>,
+    #[arg(short, long, default_value="s,ed,er,ing,ly,i,a")]
+    /// Stems treated as words, comma-separated with no spaces.
+    stems: String,
     /// Words to anagram.
     #[arg(required(true))]
     words: Vec<String>,
@@ -79,7 +91,7 @@ fn main() {
             }
         }
     }
-    let dict = load_dictionary(args.dict, &target_hist).unwrap_or_else(|e| {
+    let dict = load_dictionary(args.dict, args.limit, args.stems, &target_hist).unwrap_or_else(|e| {
         eprintln!("{}", e);
         exit(1);
     });
