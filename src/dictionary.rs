@@ -76,9 +76,7 @@ pub struct Entry {
 /// made from the target letters.  Augment the dictionary
 /// with common stems that can be used to help construct
 /// words.
-pub fn load_dictionary(
-    target: &Histogram,
-) -> Result<Vec<Entry>, DictionaryError> {
+pub fn load_dictionary(target: &Histogram) -> Result<Vec<Entry>, DictionaryError> {
     // Load in the dictionary.
     let mut dict: Vec<Entry> = Vec::new();
     let f = open_dict()?;
@@ -98,15 +96,17 @@ pub fn load_dictionary(
     // Add the stems.
     for stem in STEMS.iter() {
         if let Some(whist) = word_histogram(stem) {
-            let e = Entry { word: String::from(*stem), whist };
+            let e = Entry {
+                word: String::from(*stem),
+                whist,
+            };
             dict.push(e);
         } else {
             panic!("mysterious extra entry");
         }
     }
     // Sort in order of increasing length.
-    let len_order =
-        |a: &Entry, b: &Entry| b.word.len().cmp(&a.word.len());
+    let len_order = |a: &Entry, b: &Entry| b.word.len().cmp(&a.word.len());
     dict.sort_by(len_order);
     Ok(dict)
 }

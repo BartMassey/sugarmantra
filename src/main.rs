@@ -23,12 +23,7 @@ extern crate multiset;
 /// histogramming. Anagram words are pushed onto `sofar` as
 /// they are constructed. If construction is complete,
 /// the result is displayed.
-fn anagram<'a>(
-    dict: &'a [Entry],
-    remaining: &Histogram,
-    start: usize,
-    sofar: &mut Vec<&'a str>,
-) {
+fn anagram<'a>(dict: &'a [Entry], remaining: &Histogram, start: usize, sofar: &mut Vec<&'a str>) {
     // Base case: An anagram has been completely
     // constructed. Display it and return.
     if remaining.total_elements() == 0 {
@@ -63,7 +58,7 @@ fn main() {
             None => {
                 eprintln!("target words contain invalid characters");
                 exit(1);
-            },
+            }
         }
     }
     let dict = load_dictionary(&target_hist).unwrap_or_else(|e| {
