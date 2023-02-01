@@ -5,11 +5,11 @@
 
 [package]
 name = "sugarmantra"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["Bart Massey <bart@cs.pdx.edu>"]
+edition = "2021"
 
-# Need at least multiset 0.0.7 which has not yet been
-# accepted in upstream GitHub or pushed to Cargo as of this writing.
+# The hacked version of multiset is unfortunate. Should fix.
 [dependencies.multiset]
 git = "http://github.com/BartMassey/multiset"
 branch = "master"

@@ -5,7 +5,7 @@
 
 //! Dictionary support for sugarmantra.
 
-use histogram::*;
+use crate::histogram::*;
 
 use std::error::Error;
 use std::fmt;

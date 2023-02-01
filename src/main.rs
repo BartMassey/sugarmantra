@@ -3,6 +3,8 @@
 // Please see the file COPYING in the source
 // distribution of this software for license terms.
 
+#![allow(clippy::uninlined_format_args)]
+
 //! Anagram generator.
 
 mod dictionary;
